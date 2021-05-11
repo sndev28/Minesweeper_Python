@@ -1,0 +1,31 @@
+#:kivy 2.0
+
+Screen:
+
+    BoxLayout:
+        orientation:'vertical'
+        pos_hint: {'center_x': .5}
+        padding: 20
+
+        
+
+        GridLayout:
+            cols: 2
+            size_hint: (1, .25)
+
+            Label:
+                text: 'Minesweeper'
+                font_size: 32
+
+            Label:
+                id: timer
+                text: 'Time: -' 
+        
+        GridLayout:
+            id: game_area
+            cols: 22
+            rows: 30
+
+        
+
+
