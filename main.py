@@ -107,6 +107,7 @@ class Application(App):
 
                 for i, buttonlist in enumerate(self.buttons):
                     for j, button in enumerate(buttonlist):
+                        button.disabled = True
                         if (i,j) in self.mines:
                             button.disabled_color = (1,0,0,1)
                             button.background_color = (1, 1, 1, 1)
