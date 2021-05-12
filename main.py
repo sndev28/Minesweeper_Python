@@ -10,7 +10,7 @@ import time
 
 
 
-Window.size = (480,690)
+Window.size = (480,720)
 
 
 class AdvButton(Button):
@@ -78,6 +78,7 @@ class Application(App):
         if self.flag_first: 
             self.flag_first = False
 
+            self.root.ids.progress.text = 'Game under progress!!'
             timer = threading.Thread(target=self.timer)
             timer.start()
             
@@ -90,6 +91,10 @@ class Application(App):
                         break
 
             if pressed_button in self.mines: #lost
+                
+                self.root.ids.progress.text = 'Oof..you landed on a mine!! Game over!!'
+                self.stopper = False
+
                 for i, buttonlist in enumerate(self.buttons):
                     for j, button in enumerate(buttonlist):
                         if (i,j) in self.mines:

@@ -11,7 +11,7 @@ Screen:
 
         GridLayout:
             cols: 2
-            size_hint: (1, .25)
+            size_hint: (1, .20)
 
             Label:
                 text: 'Minesweeper'
@@ -25,6 +25,14 @@ Screen:
             id: game_area
             cols: 22
             rows: 30
+
+        Label:
+            id:progress
+            text: 'Game not started yet!'
+            size_hint: (1, .05)
+            valign: 'bottom'
+            
+
 
         
 
