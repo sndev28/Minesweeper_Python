@@ -83,7 +83,10 @@ class Application(App):
             timer.start()
             
 
-        if object.mouse_button == 'left' : # left clicked box        
+        if object.mouse_button == 'left' : # left clicked box   
+            
+            object.disabled = True    #disabling the clicked box
+
             for i, buttonlist in enumerate(self.buttons):
                 for j, button in enumerate(buttonlist):
                     if object == button:
@@ -101,11 +104,19 @@ class Application(App):
                             button.disabled_color = (1,0,0,1)
                             button.background_color = (1, 1, 1, 1)
                             button.background_disabled_normal = 'flame.jpg'
-                        button.disabled = True
                 return
 
 
-            self.game_comp(object, pressed_button, self.checked_buttons)
+            self.game_comp(object, pressed_button, self.checked_buttons)   #game setter
+            
+            if self.iswin():  #did win?
+                self.stopper = False
+                for i, j in self.mines:
+                    self.buttons[i][j].disabled = True
+                self.root.ids.progress.text = 'You win!!'
+
+                return
+
 
         elif object.mouse_button == 'right' : # right clicked box
             object.text = 'F'
@@ -117,6 +128,15 @@ class Application(App):
         object.text = ''
         object.unbind(on_press = self.rebind)
         object.bind(on_press = self.pressed)
+
+
+    def iswin(self):
+        for i, buttonlist in enumerate(self.buttons):
+            for j, button in enumerate(buttonlist):
+                if (i,j) not in self.mines:
+                    if not button.disabled:
+                        return False
+        return True
 
     stopper = True
 
@@ -145,7 +165,11 @@ class Application(App):
         color1 = (1, 1, 1, 1)
         color2 = (.5, .5, .5, 1)
 
-        for i in range(26):
+        MAX_ROWS = 26
+        MAX_COLS = 22
+        MAX_BOMBS = 78
+
+        for i in range(MAX_ROWS):
 
             if i%2:
                 color = [color1,color2]
@@ -154,7 +178,7 @@ class Application(App):
 
             column_buttons = []
 
-            for j in range(22):
+            for j in range(MAX_COLS):
                 
                 button = AdvButton(text='', size=(20, 20), size_hint=(None, None), background_color = color[j%2], on_press = self.pressed)
                 # button = AdvButton(text=' ', size=(20, 20), size_hint=(None, None), on_press = self.pressed, background_normal = 'background2.jpg')
@@ -165,7 +189,15 @@ class Application(App):
 
 
         
-        self.mines = [(random.randint(0,25), random.randint(0,21)) for _ in range(78)]
+        self.mines = [(random.randint(0,MAX_ROWS-1), random.randint(0,MAX_COLS-1)) for _ in range(MAX_BOMBS)]
+
+
+        #For developers use only - reveals bomb positions - uncomment to use
+        # for i, j in self.mines:
+        #     print(i,',',j)
+        #     self.buttons[i][j].background_color = (1,0,0,1)
+
+
 
        
 
