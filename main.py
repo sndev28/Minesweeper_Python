@@ -7,10 +7,17 @@ import random
 from concurrent.futures import ThreadPoolExecutor
 import threading
 import time
-
+import sys
+import os
 
 
 Window.size = (480,720)
+
+#pyexe
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 
 class AdvButton(Button):
@@ -103,7 +110,7 @@ class Application(App):
                         if (i,j) in self.mines:
                             button.disabled_color = (1,0,0,1)
                             button.background_color = (1, 1, 1, 1)
-                            button.background_disabled_normal = 'flame.jpg'
+                            button.background_disabled_normal = resource_path('flame.jpg')
                 return
 
 
@@ -157,7 +164,7 @@ class Application(App):
 
 
     def build(self):
-        return Builder.load_file('gui.kv')
+        return Builder.load_file(resource_path('gui.kv'))
 
     
     def on_start(self, **kwargs):
