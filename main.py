@@ -5,6 +5,7 @@ from kivy.uix.button import Button
 from kivy.config import Config
 import random
 from concurrent.futures import ThreadPoolExecutor
+import threading
 import time
 
 
@@ -74,11 +75,11 @@ class Application(App):
 
     def pressed(self, object):
 
-        if self.flag_first:
+        if self.flag_first: 
             self.flag_first = False
 
-            with ThreadPoolExecutor(max_workers=1) as pool:
-                pool.submit(self.timer)
+            timer = threading.Thread(target=self.timer)
+            timer.start()
             
 
         if object.mouse_button == 'left' : # left clicked box        
@@ -112,14 +113,15 @@ class Application(App):
         object.unbind(on_press = self.rebind)
         object.bind(on_press = self.pressed)
 
+    stopper = True
 
     def timer(self):
         t1 = time.perf_counter()
-        # global stopper
-        # stopper = True
-        while(True):
-            time.sleep(1)
-            self.root.ids.timer.text = f'Time: {time.strftime("%H:%M:%S", time.gmtime(time.perf_counter - t1))}' 
+
+        while(self.stopper):
+            time.sleep(.9)
+            self.root.ids.timer.text = f'Time: {time.strftime("%H:%M:%S", time.gmtime(time.perf_counter() - t1))}' 
+
         
 
 
@@ -160,6 +162,8 @@ class Application(App):
         
         self.mines = [(random.randint(0,25), random.randint(0,21)) for _ in range(78)]
 
+       
+
 
         
 
@@ -172,4 +176,6 @@ class Application(App):
 
 if __name__ == '__main__':
     Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
-    Application().run()
+    instance = Application()
+    instance.run()
+    instance.stopper = False
