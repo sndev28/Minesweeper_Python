@@ -20,6 +20,10 @@ def resource_path(relative_path):
     return os.path.join(os.path.abspath("."), relative_path)
 
 
+
+
+
+
 class AdvButton(Button):
     def __init__(self,**kwargs):
         super(Button, self).__init__(**kwargs)
@@ -85,6 +89,13 @@ class Application(App):
         if self.flag_first: 
             self.flag_first = False
 
+            self.first_click(self.ret_index_of_button(object))
+
+            # For developers use only - reveals bomb positions - uncomment to use
+            # for i, j in self.mines:
+            #     print(i,',',j)
+            #     self.buttons[i][j].background_color = (1,0,0,1)
+
             self.root.ids.progress.text = 'Game under progress!!'
             timer = threading.Thread(target=self.timer)
             timer.start()
@@ -94,11 +105,13 @@ class Application(App):
             
             object.disabled = True    #disabling the clicked box
 
-            for i, buttonlist in enumerate(self.buttons):
-                for j, button in enumerate(buttonlist):
-                    if object == button:
-                        pressed_button = (i,j)
-                        break
+            pressed_button = self.ret_index_of_button(object)
+
+            # for i, buttonlist in enumerate(self.buttons):
+            #     for j, button in enumerate(buttonlist):
+            #         if object == button:
+            #             pressed_button = (i,j)
+            #             break
 
             if pressed_button in self.mines: #lost
                 
@@ -161,6 +174,30 @@ class Application(App):
 
     buttons = []
     mines = []
+    MAX_ROWS = 26
+    MAX_COLS = 22
+    MAX_BOMBS = 78
+
+
+    def first_click(self, pos):
+        self.mines = [(random.randint(0,self.MAX_ROWS-1), random.randint(0,self.MAX_COLS-1)) for _ in range(self.MAX_BOMBS)]
+        
+        for index, mine in enumerate(self.mines):
+            if mine == pos:
+                self.mines[pos] = (random.randint(0,self.MAX_ROWS-1), random.randint(0,self.MAX_COLS-1))
+                while(self.mines[pos] != pos):     #runs in the super rare chance that the same pos is generated again
+                    self.mines[pos] = (random.randint(0,self.MAX_ROWS-1), random.randint(0,self.MAX_COLS-1))
+
+
+    def ret_index_of_button(self, check_button):
+
+        for i, buttonlist in enumerate(self.buttons):
+            for j, button in enumerate(buttonlist):
+                if check_button == button:
+                    return (i,j)
+
+
+                
 
 
 
@@ -173,11 +210,7 @@ class Application(App):
         color1 = (1, 1, 1, 1)
         color2 = (.5, .5, .5, 1)
 
-        MAX_ROWS = 26
-        MAX_COLS = 22
-        MAX_BOMBS = 78
-
-        for i in range(MAX_ROWS):
+        for i in range(self.MAX_ROWS):
 
             if i%2:
                 color = [color1,color2]
@@ -186,7 +219,7 @@ class Application(App):
 
             column_buttons = []
 
-            for j in range(MAX_COLS):
+            for j in range(self.MAX_COLS):
                 
                 button = AdvButton(text='', size=(20, 20), size_hint=(None, None), background_color = color[j%2], on_press = self.pressed)
                 # button = AdvButton(text=' ', size=(20, 20), size_hint=(None, None), on_press = self.pressed, background_normal = 'background2.jpg')
@@ -197,13 +230,8 @@ class Application(App):
 
 
         
-        self.mines = [(random.randint(0,MAX_ROWS-1), random.randint(0,MAX_COLS-1)) for _ in range(MAX_BOMBS)]
+        # self.mines = [(random.randint(0,MAX_ROWS-1), random.randint(0,MAX_COLS-1)) for _ in range(MAX_BOMBS)]    #moved to first_click function
 
-
-        #For developers use only - reveals bomb positions - uncomment to use
-        # for i, j in self.mines:
-        #     print(i,',',j)
-        #     self.buttons[i][j].background_color = (1,0,0,1)
 
 
 
